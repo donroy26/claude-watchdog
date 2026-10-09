@@ -11,6 +11,7 @@ const watched = atom({ plugin: 'session-watchdog', key: 'watched' } as const, []
 const info = atom({ plugin: 'session-watchdog', key: 'info' } as const, {} as Record<string, Info>)
 const addOpen = atom({ plugin: 'session-watchdog', key: 'addOpen' } as const, false)
 const now = atom({ plugin: 'session-watchdog', key: 'now' } as const, 0)
+const paneOpen = atom({ plugin: 'session-watchdog', key: 'paneOpen' } as const, false)
 
 const PILL = {
   working: { color: 'claude', label: '● Working' },
@@ -148,22 +149,28 @@ export const register: Register = on => {
     await $.command.register({ name: 'watch', description: 'Open the session-watchdog pane' })
     const saved = await $.store.get('watched')
     if (Array.isArray(saved)) await update($, watched, () => saved.map(String))
+    // A plugin reload drops the timer but $.state survives it: resume if the pane was left open.
+    if (await read($, paneOpen)) start($)
     return next(e)
   })
 
   on('command.run', { command: 'watch' }, async $ => {
     await open($)
+    await update($, paneOpen, () => true)
     start($)
     return { text: 'Session watch pane opened.' }
   })
 
   on('ui.close', async ($, e, next) => {
-    if (e.id === PANE) { timer?.cancel(); timer = undefined }
+    if (e.id === PANE) {
+      timer?.cancel()
+      timer = undefined
+      await update($, paneOpen, () => false)
+    }
     return next(e)
   })
 
   on('ui.render', { component: 'Pane', requestId: PANE }, async ($, e) => {
-    start($) // a reload drops the timer while the pane stays up; drawing the pane restarts it
     const { Box, Text, Button, Link } = $.ui.resolve(e)
     const ids = await read($, watched)
     const infos = await read($, info)
