@@ -7,6 +7,7 @@
 ![Typing /watch opens the pane](screenshots/watch-command.png)
 
 - **`/watch`** opens the pane. Nothing opens on its own.
+- Each session gets a status pill: **● Working** (transcript changed in the last 90s), **● Waiting on you** (a permission prompt or a question for you), or **○ Idle**.
 - **+ Add sessions** lists your 15 most recent sessions; click **+** to watch one, **×** to stop.
 - Summaries come from Haiku, only when a session's transcript changed, checked every 45s while the pane is open. Closing the pane stops the checks.
 - The watched list and summaries are shared, so every session's pane shows the same thing.
