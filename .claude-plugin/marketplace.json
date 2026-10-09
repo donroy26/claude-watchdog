@@ -1,0 +1,6 @@
+{
+  "name": "session-watchdog",
+  "description": "Pane that summarizes the Claude Code sessions you pick",
+  "owner": { "name": "Don Roy" },
+  "plugins": [{ "name": "session-watchdog", "source": "./" }]
+}

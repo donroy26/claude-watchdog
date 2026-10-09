@@ -1,0 +1,1 @@
+{ "name": "session-watchdog", "version": "0.1.2", "description": "A pane with a one-line Haiku summary of the Claude Code sessions you pick", "author": { "name": "Don Roy" }, "types": "./types/index.d.ts" }
