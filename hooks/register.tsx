@@ -92,7 +92,7 @@ export function status(i: Info, now: number): 'working' | 'waiting' | 'idle' {
 
 async function summarize($: $, f: F) {
   const prev = (await read($, info))[f.id]
-  if (prev && prev.mtime === f.mtime) return // cache hit: transcript unchanged
+  if (prev && prev.mtime === f.mtime && prev.wait !== undefined) return // cache hit: transcript unchanged (entries from before status pills re-run once)
   const { title, tail: t, pendingTool } = parse(await tail($, f.path).catch(() => []), f.project)
   if (!t) {
     // Nothing readable to summarize: keep the last summary rather than asking Haiku about nothing.
