@@ -2,7 +2,9 @@
 
 `session-watchdog` is a Claude Code mod that keeps tabs on the sessions you care about: a pane with each watched session's title and a one-sentence summary of what it's doing or last did, and whether it's waiting on you.
 
-![The pane: watched sessions with one-line summaries, and the Add list below](screenshots/pane.png)
+![The desktop pane: each watched session with a Working / Waiting / Idle pill and a one-line summary](screenshots/pane.png)
+
+![The same pane in the terminal](screenshots/terminal.png)
 
 ![Typing /watch opens the pane](screenshots/watch-command.png)
 
