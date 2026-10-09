@@ -130,6 +130,13 @@ async function refresh($: $) {
   for (const f of (await scan($)).filter(f => ids.includes(f.id))) await summarize($, f)
 }
 
+// Poll only while the pane is up, so sessions without it never spend Haiku calls.
+function start($: $) {
+  if (timer) return
+  timer = $.clock.every(45_000, () => void refresh($))
+  void refresh($)
+}
+
 async function toggle($: $, id: string, on: boolean) {
   await update($, watched, l => (on ? [...l.filter(x => x !== id), id] : l.filter(x => x !== id)))
   await $.store.set('watched', await read($, watched))
@@ -146,9 +153,7 @@ export const register: Register = on => {
 
   on('command.run', { command: 'watch' }, async $ => {
     await open($)
-    // Poll only in sessions where /watch was used, so idle sessions don't spend Haiku calls.
-    if (!timer) timer = $.clock.every(45_000, () => void refresh($))
-    void refresh($)
+    start($)
     return { text: 'Session watch pane opened.' }
   })
 
@@ -158,6 +163,7 @@ export const register: Register = on => {
   })
 
   on('ui.render', { component: 'Pane', requestId: PANE }, async ($, e) => {
+    start($) // a reload drops the timer while the pane stays up; drawing the pane restarts it
     const { Box, Text, Button, Link } = $.ui.resolve(e)
     const ids = await read($, watched)
     const infos = await read($, info)
